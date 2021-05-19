@@ -50,7 +50,7 @@ const HomePage = () => {
                                     Contact
                                 </div>
                             </Link>
-                            {
+                            {/* {
                                 user ?
                                 (<UserDropdown>{user.email.split('@')[0]}</UserDropdown>)
                                 :    
@@ -59,7 +59,7 @@ const HomePage = () => {
                                         Login
                                     </div>
                                 </Link>)
-                            }
+                            } */}
                         </nav>
                         <button className="lg:hidden flex flex-col ml-4">
                             <span className="w-6 h-1 bg-gray-800 dark:bg-white mb-1">

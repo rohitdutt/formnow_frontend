@@ -7,6 +7,10 @@ import FormFieldCard from '../components/FormFieldCard';
 import { useHistory } from 'react-router';
 import { useContext } from 'react';
 import { userContext } from '../context/UserProvider';
+import { useEffect } from 'react';
+import { spinnerContext } from '../context/SpinnerProvider';
+import Spinner from '../components/common/Spinner';
+import SelectEmployee from '../components/SelectEmployee';
 
 const CreateForm = () => {
 
@@ -14,33 +18,65 @@ const CreateForm = () => {
     const [title , setTitle] = useState("");
     const [description , setDescription] = useState([]);
     const [formFields , setFormFields] = useState([]);
-    const {db , user} = useContext(userContext);
+    const [selectedType , setSelectedType] = useState("input")
+    const [options , setOptions] = useState([]);
+    const [selected, setSelected] = useState("Select your name");
+    const [organization , setOrganization] = useState({
+        name: "",
+        employees: []
+    });
+    const {db , user , auth} = useContext(userContext);
+    const {setShowSpinner} = useContext(spinnerContext);
 
+    const fetchOrganization = async () =>{
+        const res = await db.collection("organization").doc(auth.currentUser.uid).get();
+        console.log(res.data());
+        setOrganization(res.data());
+        setShowSpinner(false);
+    };
     const handleAddField = () =>{
         setFormFields(oldArray => [...oldArray , {id: uuidv4() , isRequired: false , fieldName: "" , fieldType: "input"}]);
-        console.log("clicked")
         console.log(formFields);
     }
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
-        db.settings({timestampsInSnapshots: true});
         const formRef = await db.collection("forms")
             .add({
-                userId: user.uid,
+                organizationId: user.uid,
+                createdBy: selected,
                 title: title,
                 description: description,
-                formFields: formFields
+                formFields: formFields,
+                options : options ,
+                timeStamp: new Date().toString()
             });
             console.log(formRef);
             history.push('/');
     };
 
-    console.log(formFields);
+    useEffect(()=>{
+        setShowSpinner(true);
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                fetchOrganization();
+            }else{
+                history.push('/log-in')
+            } 
+          });
+    },[])
+
+    console.log(selected);
 
     return ( 
         <div className={"h-auto bg-gray-200 relative"}>
             <Navbar/>
+            <div className={"py-5 px-10 flex justify-center items-center bg-gray-200"}>
+                <p className={"text-2xl font-semibold text-gray-600"}>{organization.name}</p>
+            </div>
+            <div className={"py-5 px-10 flex justify-center items-center bg-gray-200"}>
+                Select form belongs to whom : <SelectEmployee setSelected={setSelected} selected={selected} employees={organization.employees}/>
+            </div>
             <div className={"py-5 px-10 flex justify-center items-center bg-gray-200"}>
                 <p className={"text-2xl font-semibold text-gray-600"}>Creact your form</p>
             </div>
@@ -58,18 +94,19 @@ const CreateForm = () => {
                 </form>
                 {
                         formFields.map((field)=>(
-                            <FormFieldCard key={field.id} field={field} setFormFields={setFormFields} formFields={formFields}/>
+                            <FormFieldCard key={field.id} field={field} setFormFields={setFormFields} formFields={formFields} options={options} setOptions={setOptions} selectedType={selectedType} setSelectedType={setSelectedType}/>
                         ))
                 }
                 <button type="button" className={"border border-indigo-500 bg-indigo-500 text-white rounded-md px-4 py-2 mx-4 my-6 transition duration-500 ease select-none hover:bg-indigo-600 focus:outline-none focus:shadow-outline"} onClick={handleSubmit}>
                     Create form
                 </button>
-                <div className={"absolute bottom-8 right-8 bg-white h-10 w-10 flex justify-center items-center rounded-full shadow-2xl cursor-pointer"} onClick={handleAddField}>
+                <div className={"absolute bottom-8 right-8 bg-indigo-500 text-white h-10 w-10 flex justify-center items-center rounded-full shadow-2xl cursor-pointer"} onClick={handleAddField}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                 </div>
             </div>  
+            <Spinner/>
         </div>
     );
 }

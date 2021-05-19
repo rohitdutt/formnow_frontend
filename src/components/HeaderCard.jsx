@@ -8,9 +8,17 @@ const HeaderCard = ({title , description}) => {
                     <p className="text-gray-600 dark:text-white text-3xl font-semibold">
                         {title}
                     </p>
-                    <p className="dark:text-gray-50 h-auto text-gray-700 text-sm font-thin py-2 px-6 break-all">
-                        {description}
-                    </p>
+                    {
+                        description === ""
+                        ?
+                        ""
+                        :
+                        (
+                            <p className="dark:text-gray-50 h-auto text-gray-700 text-sm font-thin py-2 px-6 break-all">
+                                {description}
+                            </p>
+                        )
+                    }
                 </div>
             </div>
         </div>

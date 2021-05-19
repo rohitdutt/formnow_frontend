@@ -14,6 +14,8 @@ import SpinnerProvider from './context/SpinnerProvider';
 import Contact from './components/contact/Contact';
 import Products from './pages/Products';
 import CreateOrganization from "./pages/CreateOrganization";
+import OrganizationHomepage from './pages/OrganizationHomepage';
+import ViewResponses from './pages/ViewResponses';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
               <Route path={'/products'} component={Products} exact/>
               <Route path={'/contact'} component={Contact} exact/>
               <Route path={'/create-organization'} component={CreateOrganization} exact/>
+              <Route path={'/organization-home'} component={OrganizationHomepage} exact/>
+              <Route path={'/responses/:id'} component={ViewResponses} exact/>
             </Switch>
           </Router>
         </SpinnerProvider>

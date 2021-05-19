@@ -20,7 +20,7 @@ const ViewAllForms = () => {
     const history = useHistory();
 
     const fetchForms = async () =>{
-        const res = await db.collection('forms').where("userId","==" , auth.currentUser.uid).get();
+        const res = await db.collection('forms').where("organizationId","==" , auth.currentUser.uid).get();
         res.docs.forEach(form => {
             console.log(form)
             const data = form.data();

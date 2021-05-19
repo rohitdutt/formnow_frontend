@@ -24,11 +24,11 @@ const CreateOrganization = () => {
         //   console.log(res.user);
             res.user.sendEmailVerification();
             console.log(res.user)
-            const formRef = await db.collection("organization")
-                .add({
+            const employees = organizationInfo.employees.split(",");
+            const formRef = await db.collection("organization").doc(res.user.uid)
+                .set({
                     name: organizationInfo.name,
-                    accountUID: res.user.uid,
-                    employees: organizationInfo.employees
+                    employees: employees
                 });
                 console.log(formRef);
                 setIsModalShown(true)
