@@ -3,60 +3,71 @@ import { useContext } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import FormsTable from '../components/FormsTable';
-import HeaderCard from '../components/HeaderCard';
-import TextInput from '../components/inputs/TextInput';
 import Navbar from '../components/Navbar';
-import ShowFieldCard from '../components/ShowFieldCard';
 import { spinnerContext } from '../context/SpinnerProvider';
 import { userContext } from '../context/UserProvider';
 import Spinner from '../components/common/Spinner';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
+import NotFound from "../assets/not-found.svg";
+import firebase from "firebase";
+
 
 const ViewAllForms = () => {
 
     const [forms , setForms] = useState([]);
+    const [statusChanged , setStatusChanged] = useState(false);
     const {setShowSpinner} = useContext(spinnerContext);
-    const {db , auth , user , setUser} = useContext(userContext);
+    const {db , auth , setUser} = useContext(userContext);
     const history = useHistory();
 
     const fetchForms = async () =>{
         const res = await db.collection('forms').where("organizationId","==" , auth.currentUser.uid).get();
         res.docs.forEach(form => {
-            console.log(form)
             const data = form.data();
             data["formId"] = form.id;
             setForms(oldArray => [...oldArray , data]);
-            console.log(form)
         });
         setShowSpinner(false);
     };
 
+    console.log(firebase.auth().currentUser.getIdToken(true))
     useEffect(()=>{
         setShowSpinner(true);
         auth.onAuthStateChanged((user) => {
             if (user) {
                 setUser(user);
-                if(forms.length === 0){
+                setForms([]);
                     fetchForms();
-                }
             }else{
                 history.push('/log-in')
-            } 
+            }
           });
-    },[]);
+        setShowSpinner(false);
+    },[statusChanged]);
 
-    console.log(forms)
-    return ( 
-        <div className={"bg-green-300 h-screen w-full"}>
-            <div className={"h-full bg-blue-500"}>
+    console.log(statusChanged)
+    return (
+            forms &&
+            <div className={"h-auto w-full"}>
                 <Navbar/>
-                <div>
-                    <FormsTable data={forms}/>
-                </div>
+                {
+                    forms.length !== 0 ?
+                        (<div className={"border-t"}>
+                            <FormsTable data={forms} setStatusChanged={setStatusChanged} statusChanged={statusChanged}/>
+                        </div>)
+                        :
+                        (
+                            <div className={"w-full flex justify-center py-3"}>
+                                <div className={"h-80 w-80 mt-16"}>
+                                    <img src={NotFound} alt={"nothing found"}/>
+                                    <p className={"text-center mt-8 capitalize text-indigo-500 text-xl font-semibold"}>COULDN'T FIND ANYTHING!</p>
+                                </div>
+                            </div>
+                        )
+                }
+                <Spinner/>
             </div>
-            <Spinner/>
-        </div>
-     );
-}
- 
+    );
+};
+
 export default ViewAllForms;

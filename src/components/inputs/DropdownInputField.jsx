@@ -3,34 +3,60 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-const DropdownInputField = ({options , setOptions}) => {
 
-    const handleChange = (e) => {
-        const index = options.findIndex(item => item.id === e.target.id);
-        const tempField = options[index];
-        tempField['value'] = e.target.value;
+const DropdownInputField = ({field , setFormFields , formFields}) => {
+
+    const [options , setOptions] = useState([]);
+
+    const handleAddOptions = async (e) =>{
+        const index = formFields.findIndex(item => item.id === field.id);
+        const tempField = formFields[index]
+        setOptions(oldArray => [...oldArray , {id: uuidv4() , fieldValue: ""}]);
+        tempField["options"] = options
+        console.log(formFields)
+    };
+
+    // const handleAddOptions = (e) =>{
+    //     console.log(field.id);
+    //     const index = formFields.findIndex(item => item.id === field.id);
+    //     const tempField = formFields[index]
+    //     tempField['']
+    //     setOptions(oldArray => [...oldArray , {id: uuidv4() , fieldValue: ""}]);
+    //     console.log(tempField)
+    // };
+
+    const handleChange = (e , id) =>{
+        const fieldIdx = formFields.findIndex(item => item.id === field.id);
+        const tempField = formFields[fieldIdx]
+        const index = options.findIndex(item => item.id === id);
+        const tempOption = options[index];
+        tempOption['fieldValue'] = e.target.value;
         if (index === -1){
             console.log('no match')
         }
         else
             setOptions([
                 ...options.slice(0,index),
-                tempField,
+                tempOption,
                 ...options.slice(index+1)
             ]);
-        console.log(options)
-    };
+        tempField["options"] = options
+        console.log(formFields)
 
-    const handleAddOptions = () =>{
-        setOptions(oldArray => [...oldArray , {id: uuidv4() , value: ""} ])
-    };
+    }
 
     console.log(options)
-    return ( 
+
+    return (
         <div className={"w-full flex flex-col items-center justify-center"}>
             {
-                options.map((option , index)=>(
-                    <input id={option.id} key={option.id} placeholder={`enter option ${index+1}`} type="text" className="block md:w-2/5 px-4 py-1 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-purple-500 dark:focus:border-blue-500 focus:outline-none focus:ring focus:ring-purple-400" onChange={handleChange}/>
+                options && options.map((option , index)=>(
+                    <div className={"flex justify-center items-center my-1"}>
+                        <input id={option.id} key={option.id} value={option.fieldValue} placeholder={`enter option ${index+1}`} type="text" className="block md:w-48 px-4 py-1 mt-0 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-purple-500 dark:focus:border-blue-500 focus:outline-none focus:ring focus:ring-purple-400" onChange={e =>handleChange(e,option.id)}/>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 cursor-pointer text-gray-500 ml-1" viewBox="0 0 20 20" fill="currentColor"  onClick={()=>setOptions(options.filter(item => item.id !== option.id))}>
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                    </div>
                 ))
             }
             <div className={"flex my-2"}>
@@ -42,5 +68,5 @@ const DropdownInputField = ({options , setOptions}) => {
         </div>
     );
 }
- 
+
 export default DropdownInputField;

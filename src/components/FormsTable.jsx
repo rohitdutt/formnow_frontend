@@ -1,15 +1,28 @@
-import React , { useState }from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import FormLinkModal from './common/FormLinkModal';
-import MoreOptions from './MoreOptions';
+import {userContext} from "../context/UserProvider";
+import {spinnerContext} from "../context/SpinnerProvider";
 
-const FormsTable = ({data}) => {
+const FormsTable = ({data , setStatusChanged , statusChanged}) => {
     const [isModalShown , setIsModalShown] = useState(false);
     const [formId , setFormId] = useState("");
 
-    return ( 
+    const {db} = useContext(userContext);
+
+    console.log(data)
+
+    const handleFormStatus = async (formId , isActive) =>{
+        console.log(formId + " clicked " + isActive)
+        const res = await db.collection("forms").doc(formId).update({
+            "isActive": !isActive,
+        })
+        setStatusChanged(!statusChanged);
+    }
+
+    return (
         <div className="container mx-auto px-4 sm:px-8 max-w-4xl">
-            <div className="py-8">
+            <div className="pt-8">
                 <div class="flex flex-row mb-1 sm:mb-0 justify-between w-full">
                     <h2 className="text-2xl leading-tight">
                         Forms
@@ -17,7 +30,7 @@ const FormsTable = ({data}) => {
                     <div className="text-end">
                         <form className="flex w-full max-w-sm space-x-3">
                             <div className=" relative ">
-                                <input type="text" id="&quot;form-subscribe-Filter" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="name"/>
+                                <input type="text" id="&quot;form-subscribe-Filter" className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" placeholder="Search forms here"/>
                             </div>
                             <button className="flex-shrink-0 px-4 py-2 text-base font-semibold text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-purple-200" type="submit">
                                 Filter
@@ -51,12 +64,12 @@ const FormsTable = ({data}) => {
                             </thead>
                             <tbody>
                                 {
-                                    data.map(item => (
-                                            <tr>
+                                    data && data.map(item => (
+                                            <tr key={item.formId}>
                                                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                                     {/* <div className="flex items-center">
                                                         <div className="ml-3"> */}
-                                                            <Link to={`/responses/${item.formId}`}>
+                                                            <Link to={`/dashboard/${item.formId}`}>
                                                                 <p className="text-gray-900 whitespace-no-wrap hover:underline">
                                                                     {item.title}
                                                                 </p>
@@ -75,13 +88,25 @@ const FormsTable = ({data}) => {
                                                     </p>
                                                 </td>
                                                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                    <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-                                                        <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
+                                                    {
+                                                        item.isActive
+                                                        ?
+                                                        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight cursor-pointer" onClick={()=>handleFormStatus(item.formId , item.isActive)}>
+                                                            <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full">
+                                                            </span>
+                                                            <span className="relative">
+                                                                active
+                                                            </span>
                                                         </span>
-                                                        <span className="relative">
-                                                            active
+                                                        :
+                                                        <span className="relative inline-block px-3 py-1 font-semibold text-red-900 leading-tight cursor-pointer" onClick={()=>handleFormStatus(item.formId , item.isActive)}>
+                                                            <span aria-hidden="true" className="absolute inset-0 bg-red-200 opacity-50 rounded-full">
+                                                            </span>
+                                                            <span className="relative">
+                                                                inactive
+                                                            </span>
                                                         </span>
-                                                    </span>
+                                                    }
                                                 </td>
                                                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                                     <div href="#" className="text-indigo-600 hover:text-indigo-900 cursor-pointer underline" onClick={()=>{
@@ -91,7 +116,7 @@ const FormsTable = ({data}) => {
                                                         Share form
                                                     </div>
                                                 </td>
-                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">      
+                                                <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                     </svg>
@@ -108,5 +133,5 @@ const FormsTable = ({data}) => {
         </div>
      );
 }
- 
+
 export default FormsTable;

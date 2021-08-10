@@ -14,11 +14,10 @@ const MoreOptions = ({children,id}) => {
         console.log(user);
         await auth.signOut();
         setUser(null);
-        console.log(user);
         console.log(auth.currentUser);
     }
 
-    return ( 
+    return (
         <div className="text-right">
             <Menu as="div" className="relative inline-block text-left">
                 {({ open }) => (

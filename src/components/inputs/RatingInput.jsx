@@ -1,31 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Rating from '@material-ui/lab/Rating';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 
 const RatingInput = ({response , setResponse , fieldId}) => {
 
     const [value, setValue] = React.useState(0);
 
-    useEffect(()=>{
-        setResponse({...response , [fieldId] : value})
-    },[value]);
+        console.log(response)
 
-    return ( 
-        <>
-            <div className={"flex justify-center"}>
-                <Box component="fieldset" mb={0} borderColor="transparent">
-                    <Rating
-                    name="simple-controlled"
-                    value={value}
-                    onChange={(event, newValue) => {
-                        setValue(newValue);
-                    }}
-                    />
-                </Box>
+          return (
+            <div className={"flex justify-center mt-2 mb-1"}>
+              <Rating
+                  name={fieldId}
+                  value={value}
+                  onChange={(event, newValue) => {
+                      setResponse && setResponse({...response , [fieldId] : newValue.toString() + "/5"})
+                      setValue(newValue)
+                  }}
+                  />
             </div>
-        </>
-    );
-}
- 
+          );
+        }
+
 export default RatingInput;

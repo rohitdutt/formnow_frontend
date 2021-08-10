@@ -3,20 +3,21 @@ import { Menu ,Transition } from '@headlessui/react';
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { useContext } from 'react/cjs/react.development';
 import { userContext } from '../context/UserProvider';
+import {useHistory} from "react-router-dom";
 
 const UserDropdown = ({children}) => {
 
     const {user, setUser , auth} = useContext(userContext);
+    const history = useHistory();
 
-    const handleSignout =async () =>{
-        console.log(user);
+    const handleSignout = async () =>{
         await auth.signOut();
         setUser(null);
-        console.log(user);
+        history.push('/log-in');
         console.log(auth.currentUser);
     }
 
-    return ( 
+    return (
         <div className="text-right">
             <Menu as="div" className="relative inline-block text-left">
                 {({ open }) => (

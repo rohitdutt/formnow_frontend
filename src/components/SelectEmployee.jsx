@@ -5,7 +5,7 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 const SelectEmployee = ({employees , selected , setSelected}) =>{
 
   return (
-    <div className="w-48">
+    <div className="ml-2 w-48">
       <Listbox value={selected} onChange={setSelected}>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">

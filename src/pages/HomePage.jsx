@@ -12,18 +12,19 @@ const HomePage = () => {
     const {setShowSpinner} = useContext(spinnerContext);
     const history = useHistory();
 
-    useEffect(()=>{
-        setShowSpinner(true);
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                setShowSpinner(false)
-            }else{
-                history.push('/log-in')
-            } 
-          });
-    })
+    // useEffect(()=>{
+    //     setShowSpinner(true);
+    //     auth.onAuthStateChanged((user) => {
+    //         if (user) {
+    //             setShowSpinner(false)
+    //         }else{
+    //             history.push('/log-in')
+    //             setShowSpinner(false)
+    //         }
+    //       });
+    // })
 
-    return ( 
+    return (
         <div>
         <main className="dark:bg-gray-800 bg-white relative overflow-hidden h-screen">
             <header className="h-24 sm:h-32 flex items-center z-30 w-full">
@@ -50,16 +51,11 @@ const HomePage = () => {
                                     Contact
                                 </div>
                             </Link>
-                            {/* {
-                                user ?
-                                (<UserDropdown>{user.email.split('@')[0]}</UserDropdown>)
-                                :    
-                                (<Link to={'log-in'}>
-                                    <div className="py-2 px-6 flex">
-                                        Login
-                                    </div>
-                                </Link>)
-                            } */}
+                            <Link to={'/log-in'}>
+                                <div className="py-2 px-6 flex hover:underline">
+                                    Sign in/up
+                                </div>
+                            </Link>
                         </nav>
                         <button className="lg:hidden flex flex-col ml-4">
                             <span className="w-6 h-1 bg-gray-800 dark:bg-white mb-1">
@@ -109,5 +105,5 @@ const HomePage = () => {
         </div>
     );
 }
- 
+
 export default HomePage;
