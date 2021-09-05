@@ -13,17 +13,17 @@ const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
+        display: 'flex',
+        justifyContent: 'center',
     },
 }));
 
 const DropdownInput = ({response , setResponse , fieldId}) => {
 
-    console.log(response)
     const classes = useStyles();
     const [selectedValue, setSelectedValue] = React.useState('');
 
     const handleChange = (event) => {
-        console.log(fieldId)
         setResponse && setResponse({...response , [fieldId.fieldName] : event.target.value})
         setSelectedValue(event.target.value);
     };
@@ -31,7 +31,7 @@ const DropdownInput = ({response , setResponse , fieldId}) => {
     return (
         <>
             <FormControl className={classes.formControl}>
-                <InputLabel id="demo-controlled-open-select-label">Select One</InputLabel>
+                <InputLabel id="select-label">Select One</InputLabel>
                 <Select
                     labelId="demo-controlled-open-select-label"
                     id="demo-controlled-open-select"

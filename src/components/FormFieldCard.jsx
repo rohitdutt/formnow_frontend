@@ -1,18 +1,17 @@
-import React from 'react';
-import { useState  , useEffect} from 'react';
+import React,{ useEffect} from 'react';
 import "../styles/create-form.scss";
 import DropdownInputField from './inputs/DropdownInputField';
 import LargeInput from './inputs/LargeInput';
 import RatingInput from './inputs/RatingInput';
 import SelectInputType from './inputs/SelectInputType';
 import TextInput from './inputs/TextInput';
+import {TextField} from "@material-ui/core";
 
 const FormFieldCard = ({setFormFields , formFields , field , selectedType , setSelectedType}) => {
 
     const handleChange= (e) =>{
         const index = formFields.findIndex(item => item.id === field.id);
         const tempField = formFields[index];
-        console.log(tempField);
         tempField['fieldName'] = e.target.value;
         if (index === -1){
             console.log('no match')
@@ -28,7 +27,6 @@ const FormFieldCard = ({setFormFields , formFields , field , selectedType , setS
     const handleIsRequired = () =>{
         const index = formFields.findIndex(item => item.id === field.id);
         const tempField = formFields[index];
-        console.log(tempField);
         tempField['isRequired'] = !tempField['isRequired'];
         if (index === -1){
             console.log('no match')
@@ -44,7 +42,6 @@ const FormFieldCard = ({setFormFields , formFields , field , selectedType , setS
     useEffect(()=>{
         const index = formFields.findIndex(item => item.id === field.id);
         const tempField = formFields[index];
-        console.log(tempField);
         if (index === -1){
             console.log('no match')
         }
@@ -54,36 +51,37 @@ const FormFieldCard = ({setFormFields , formFields , field , selectedType , setS
                 tempField,
                 ...formFields.slice(index+1)
             ]);
-            console.log(formFields)
     },[])
 
     return (
-        <form className={"bg-white w-5/6 md:w-4/6 py-4 rounded-lg shadow-2xl my-2 relative"}>
-            <div className={"flex flex-col justify-center items-center px-4 sm:px-10 py-2"}>
-                <p className={"text-xl font-semibold text-gray-600"}>{"Enter title for " + `${selectedType}`}</p>
-                <input id="formtitle" type="text" className="block w-full md:w-3/6 px-4 py-1 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-purple-500 dark:focus:border-blue-500 focus:outline-none focus:ring focus:ring-purple-400" onChange={handleChange}/>
+        <form className={"bg-white w-full lg:w-5/6 py-4 rounded-lg shadow-2xl my-2 relative"}>
+            <div className={"flex flex-col justify-center items-center px-4 sm:px-10 py-2 mt-4 lg:mt-0"}>
+                <TextField id="formtitle" label="Enter title for field" className={"w-full lg:w-72"}
+                           variant={"outlined"} onChange={handleChange}/>
             </div>
             <div className={"flex justify-center"}>
             {
                 field.fieldType === "Dropdown"
                 ?
-                    <DropdownInputField field={field} setFormFields={setFormFields}  formFields={formFields}/>
+                    <div className={"w-full px-4 lg:w-2/5"}>
+                        <DropdownInputField isDisabled field={field} setFormFields={setFormFields}  formFields={formFields}/>
+                    </div>
                 :
                 field.fieldType === "ratings"
                 ?
-                <div className={"w-3/6"}>
+                <div className={"w-full px-4 lg:w-2/5"}>
                     <RatingInput/>
                 </div>
                 :
                 field.fieldType === "input"
                 ?
-                <div className={"w-3/6"}>
-                    <TextInput/>
+                <div className={"w-full px-4 lg:w-2/5"}>
+                    <TextInput isDisabled/>
                 </div>
                 :
                 field.fieldType === "large input"
                 ?
-                <div className={"w-3/6"}>
+                <div className={"w-full px-4 lg:w-2/5"}>
                     <LargeInput/>
                 </div>
                 :

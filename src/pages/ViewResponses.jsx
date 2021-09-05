@@ -1,5 +1,4 @@
-import React , {useEffect , useContext, useState}from 'react';
-import Spinner from '../components/common/Spinner';
+import React , {useContext} from 'react';
 import ResTable from "../components/formDashboard/ResTable";
 import {responseContext} from "../context/ResponseProvider";
 
@@ -8,8 +7,8 @@ const ViewResponses = () => {
     const { responses } = useContext(responseContext);
 
     return (
-    <div className={"mt-6 justify-center items-center"}>
-        <div className={"flex justify-center "}>
+        responses &&
+        <div className={"mt-1 lg:mt-2 justify-center items-center"}>
             {
                 responses.length !== 0
                 ?
@@ -19,8 +18,6 @@ const ViewResponses = () => {
                         Opps! No responses found
                     </div>
             }
-        </div>
-        <Spinner/>
     </div>
     );
 }

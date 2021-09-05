@@ -23,7 +23,7 @@ const ResTable = () => {
         if(responses !== undefined){
         var keys = getKeys();
         return items.map((row, index)=>{
-            return <tr className={"break-all"} key={index}><RenderRow key={index} data={row} keys={keys}/></tr>
+            return <tr className={"w-80 break-all"} key={index}><RenderRow key={index} data={row} keys={keys}/></tr>
         })
         }
     }
@@ -31,17 +31,17 @@ const ResTable = () => {
         return(<p>Loading ... </p>)
     }
     return (
-        <div className="flex flex-col">
-            <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <div className="flex flex-col h-5/6 w-full lg:px-8">
+            <div className="-my-2 sm:-mx-6 lg:-mx-8">
+                <div className="py-2 align-middle inline-block w-full">
+                    <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-200 w-20">
                                 <tr>{
                                         getHeader()
                                 }</tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-white divide-y divide-gray-200 h-full overflow-auto">
                                 {getRowsData()}
                             </tbody>
                         </table>
@@ -53,8 +53,10 @@ const ResTable = () => {
 }
 const RenderRow = (props) =>{
     return props.keys.map((key, index)=>{
-        return <td className="px-6 py-4 break-words h-auto text-gray-600" key={index}>{props.data[key]}</td>
+        return <td className="px-1 lg:px-6 py-1 lg:py-3 break-words h-auto text-gray-600" key={index}>{props.data[key]}</td>
     })
 }
 
 export default ResTable;
+
+

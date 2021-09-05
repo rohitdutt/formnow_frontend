@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -8,14 +7,16 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import ViewResponses from "../pages/ViewResponses";
 import Analytics from "./formDashboard/Analytics";
-import ResponseProvider, {responseContext} from "../context/ResponseProvider";
-import {spinnerContext} from "../context/SpinnerProvider";
+import {responseContext} from "../context/ResponseProvider";
 import {userContext} from "../context/UserProvider";
 import {useHistory , Link} from "react-router-dom";
+import SplashScreen from "./common/SplashScreen";
+import axios from "axios";
+import firebase from '../firebase/firebase';
+import {getFormFieldsByFormId, getResponsesByFormId} from "../httpResources/firebaseActions"
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
+  const {children, value, index, ...other } = props;
   return (
     <div
       role="tabpanel"
@@ -47,78 +48,115 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-}));
-
 const ViewFormTabs = ({id}) => {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
 
+  const [value, setValue] = useState(0);
+  const [isLoading , setIsLoading] = useState(false);
+  const [joke , setJoke] = useState("");
   const {setResponses , formDetails , setFormsDetails , responses} = useContext(responseContext);
-  const {setShowSpinner} = useContext(spinnerContext);
-  const {auth , db , setUser} = useContext(userContext);
+  const {setUser} = useContext(userContext);
   const history = useHistory();
 
+  const fetchJoke = async () => {
+    try {
+      const res = await axios.get("https://api.chucknorris.io/jokes/random");
+      setJoke(res.data.value)
+      console.log(res.data)
+    }catch (e){
+      console.log(e)
+    }
+  }
 
   const fetchResponses = async () =>{
-    const res = await db.collection('response').where("formId" , "==" , id).get();
-    res.docs.forEach(response =>{
+    setResponses([]);
+    const res = await getResponsesByFormId(id);
+    res.forEach(response =>{
       setResponses(oldResponses => [...oldResponses , response.data().response])
     });
   };
 
   const fetchFormFields = async () =>{
-    const res = await db.collection('forms').doc(id).get();
+    const res = await getFormFieldsByFormId(id);
     setFormsDetails(res.data());
+    if (res.data().description === "") {
+      await fetchJoke();
+    }
+    setIsLoading(false);
   };
+
   useEffect(()=>{
-    setShowSpinner(true);
-    auth.onAuthStateChanged((user) => {
+    setIsLoading(true);
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
-        fetchFormFields();
+        fetchFormFields().then(r => {});
         if(responses.length === 0){
-          fetchResponses();
+          fetchResponses().then(r => {});
         }
-        setShowSpinner(false);
       }else{
-        setShowSpinner(false);
+        setIsLoading(false);
         history.push('/log-in')
       }
     });
   },[]);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-        <div className={classes.root}>
-          <div className={"relative bg-white border-t"}>
-            <Link to={"/organization-home"}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute left-8 top-5 cursor-pointer" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-            </Link>
-            <p className={"py-4 font-semibold text-2xl text-gray-700 text-center"}>{formDetails ? formDetails.title : null}</p>
-            <p className={"py-2 text-md text-gray-700 text-center absolute top-2 right-2"}>Created by : <span className={"font-semibold"}>{formDetails ? formDetails.createdBy : null}</span></p>
+      isLoading ?
+        <SplashScreen/>
+      :
+          <div className={"h-screen bg-gray-200"}>
+            <div className={"flex flex-col lg:flex-row h-full"}>
+              <div className={"w-full lg:w-1/4 p-1 lg:p-2 lg:h-full"}>
+                <div className={"h-full bg-white w-full rounded-lg shadow-2xl flex flex-col items-center relative"}>
+                  <Link to={"/organization-home"}>
+                    <p className={"uppercase text-xl lg:text-2xl font-semibold text-indigo-600 my-4 lg:my-8 hover:underline"}>Formnow</p>
+                  </Link>
+                  <p className={"py-2 lg:py-4 px-1 font-semibold text-xl lg:text-2xl text-gray-700 text-center break-words"}>{formDetails ? formDetails.title : null}</p>
+                  {
+                    formDetails && formDetails.createdBy != "None" ?
+                        <p className={"py-2 text-md text-gray-700 text-center"}>Created by : <span className={"font-semibold"}>{formDetails ? formDetails.createdBy : null}</span></p>
+                        :
+                        null
+                  }
+                  <div className={"mt-2 px-2 max-h-72 overflow-y-auto"}>
+                    {
+                      <p className="overflow-y-auto dark:text-gray-50 h-auto text-gray-700 text-md py-2 break-words lg:mt-4 max-h-80">
+                        {
+                          formDetails && formDetails.description != "" ?
+                              formDetails.description
+                              :
+                              <>
+                              {joke && <p className={"hidden lg:block mb-4 font-semibold text-gray-500"}>We couldn't find any form description belongs with this form so here's a joke for you :</p>}
+                                {joke}
+                              </>
+                        }
+                      </p>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div className={" w-full pt-0 lg:pt-2 p-1 lg:p-2 h-full overflow-y-auto"}>
+                <div className={"bg-white w-full min-h-full rounded-lg shadow-2xl pb-4 flex flex-col items-center"}>
+                  <AppBar position="static">
+                    <Tabs value={value} TabIndicatorProps={{style: {background:'#6366F1'}}} onChange={handleChange} aria-label="simple tabs"  className={"bg-white text-black border-t"}>
+                      <Tab label="Responses" {...a11yProps(0)} className={"bg-white border border-indigo-500"}/>
+                      <Tab label="Analytics" {...a11yProps(1)} className={"bg-white border-b-2 border-indigo-500"}/>
+                    </Tabs>
+                  </AppBar>
+                  <TabPanel value={value} index={0} className={"w-full"}>
+                    <ViewResponses id={id}/>
+                  </TabPanel>
+                  <TabPanel value={value} index={1} className={"w-full"}>
+                    <Analytics id={id}/>
+                  </TabPanel>
+                </div>
+              </div>
+            </div>
           </div>
-          <AppBar position="static">
-            <Tabs value={value} onChange={handleChange} aria-label="simple tabs example"  className={"bg-white text-black border-t"}>
-              <Tab label="Responses" {...a11yProps(0)} className={"bg-white"}/>
-              <Tab label="Analytics" {...a11yProps(1)}  className={"bg-white"}/>
-            </Tabs>
-          </AppBar>
-          <TabPanel value={value} index={0}>
-            <p className={"py-1 px-40 text-md text-gray-700 text-center"}>{formDetails ? formDetails.description : null}</p>
-            <ViewResponses id={id}/>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <Analytics id={id}/>
-          </TabPanel>
-        </div>
   );
 }
 

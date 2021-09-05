@@ -1,35 +1,83 @@
-import React, {useEffect, useState} from 'react';
-import Chart from 'react-apexcharts'
+import React , {useState} from 'react';
+import Chart from "react-apexcharts";
 
-const RatingDistribution = ({children , responses , ratings , setRatings , id}) =>{
 
-    const [options , setOptions] = useState({
-        labels: [ "1 star" , "2 star" , "3 star" , "4 star" , "5 star"],
-        legend: {
-            position: 'right'
-        },
-        colors: ['#EF4444' , '#34D399' , '#fB0' , '#3B82F6' , '#4ca1a3']
-    });
-    const handleOnLoad = () =>{
-        responses.map((response,index) => {
-            let g = [...ratings];
-            g[response.response[id]-1] = g[response.response[id]-1] + 1;
-            console.log(g);
-            setRatings(g);
-            console.log(ratings);
-        })
+const RatingDistribution= ({data}) =>{
+
+    const chartTitles = [];
+    
+    const [series,setSeries] = useState([{
+                name: '1 stars',
+                data: []
+            }, {
+                name: '2 stars',
+                data: []
+            }, {
+                name: '3 stars',
+                data: []
+            },{
+                name: '4 stars',
+                data: []
+            },{
+                name: '5 stars',
+                data: []
+            }]);
+
+        const [options , setOptions]= useState({
+            chart: {
+                type: 'bar',
+                height: 350
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: chartTitles,
+            },
+            yaxis: {
+                title: {
+                    text: 'No. of responses'
+                }
+            },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val;
+                    }
+                }
+            }
+        });
+
+    for(const key in data) {
+        if(data.hasOwnProperty(key)){
+            chartTitles.push(key.toString());
+            series.forEach(item=>{
+                item.data.push(data[key][item.name.split(' ')[0] - 1]);
+            })
+        }
     }
-    useEffect(()=>{
-        handleOnLoad();
-    },[])
+
         return (
-            <div className={"width-full bg-white rounded py-2 flex flex-col justify-center"}>
-                <div className={"my-1 px-4 break-words text-center font-semibold text-gray-500"}>{children + " " +"ratings"}</div>
-                <div className="donut flex justify-center">
-                    <Chart options={options} series={ratings} type="donut" width="380" />
-                </div>
+            <div id="chart" className={"m-2 lg:m-4"}>
+                <h5 className={"text-center mt-5 font-semibold text-gray-600"}>Ratings distribution</h5>
+                <Chart options={options} series={series} type="bar" height={350} />
             </div>
-        );
-};
+        )
+    }
 
 export default RatingDistribution;

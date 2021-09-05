@@ -1,21 +1,10 @@
 import React ,{Fragment} from 'react';
 import { Menu ,Transition } from '@headlessui/react';
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { useContext } from 'react/cjs/react.development';
-import { userContext } from '../context/UserProvider';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 
 const MoreOptions = ({children,id}) => {
 
-    const {user, setUser , auth} = useContext(userContext);
     const history = useHistory();
-
-    const handleSignout =async () =>{
-        console.log(user);
-        await auth.signOut();
-        setUser(null);
-        console.log(auth.currentUser);
-    }
 
     return (
         <div className="text-right">

@@ -1,13 +1,23 @@
 import React from 'react';
 
-const Card = ({noOfResponses , children}) => {
+const Card = ({number, children, icon}) => {
     return (
-        <div class="p-5 bg-white rounded shadow-sm dark:bg-gray-800">
-                <div class="text-base text-gray-400 dark:text-gray-300">{children}</div>
-                <div class="flex items-center pt-1">
-                    <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{noOfResponses && noOfResponses}</div>
+        <div className="w-full">
+            <div
+                className="widget bg-indigo-600 w-full p-4 rounded-lg bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800">
+                <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col">
+                        <div className="text-xs uppercase font-light text-white">
+                            {children}
+                        </div>
+                        <div className="mt-2 text-xl font-bold text-white">
+                            {number}
+                        </div>
+                    </div>
+                    {icon}
                 </div>
-           </div>
+            </div>
+        </div>
      );
 }
 

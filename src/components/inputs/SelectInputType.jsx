@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { Listbox } from '@headlessui/react'
+import { SelectorIcon } from '@heroicons/react/solid'
 
 const inputType = [ "input" , "large input" , "ratings" , "Dropdown"]
 

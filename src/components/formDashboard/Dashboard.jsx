@@ -1,8 +1,6 @@
 import React from 'react';
-import { useParams } from 'react-router';
-import Navbar from '../Navbar';
+import { useParams } from 'react-router-dom';
 import ViewFormTabs from '../ViewFormTabs';
-import Card from './Card';
 import ResponseProvider from "../../context/ResponseProvider";
 
 const Dashboard = () => {
@@ -12,7 +10,6 @@ const Dashboard = () => {
     return (
         <ResponseProvider>
             <div className={"h-full bg-gray-300"}>
-                {/* <Navbar/> */}
                 <ViewFormTabs id={id}/>
             </div>
         </ResponseProvider>

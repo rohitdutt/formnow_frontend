@@ -1,19 +1,19 @@
 import React, { createContext, useState } from 'react';
 import { useEffect } from 'react';
-import firebase from '../firebase/firebase'
+import { getAuth } from "firebase/auth";
+import firebase from "firebase/compat";
 
 export const userContext = createContext({user: null});
 
 const UserProvider = (props) => {
 
-  const [ user , setUser ] = useState(firebase.auth().currentUser);
+    const firebaseAuth = getAuth();
+    const [ user , setUser ] = useState("");
   const [fireBase , setFireBase] = useState(firebase);
-  const [auth , setAuth] = useState(firebase.auth());
-  const [db , setDb] = useState(firebase.firestore())
 
   useEffect(()=>{
-    auth.onAuthStateChanged(userAuth =>{
-      setUser(userAuth);
+    firebaseAuth.onAuthStateChanged(userAuth =>{
+            setUser(userAuth);
     })
   })
   
@@ -24,8 +24,6 @@ const UserProvider = (props) => {
               setUser,
               fireBase,
               setFireBase,
-              auth,
-              db
             }}>
           {props.children}
         </userContext.Provider>
