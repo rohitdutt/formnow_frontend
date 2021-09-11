@@ -1,7 +1,8 @@
-import firebase from 'firebase'
+import firebase from 'firebase/compat'
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-    // apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     apiKey: "AIzaSyBogyOclR0uS-tfm_BSuRaeixAUl3s0oic",
     authDomain: "formsnow-40b50.firebaseapp.com",
     projectId: "formsnow-40b50",
@@ -12,4 +13,9 @@ const firebaseConfig = {
   };
 
 firebase.initializeApp(firebaseConfig);
+
+export const db = firebase.firestore();
+
+export const auth = firebase.auth();
+
 export default firebase;

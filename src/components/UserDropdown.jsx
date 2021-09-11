@@ -1,22 +1,10 @@
-import React ,{Fragment} from 'react';
+import React ,{Fragment } from 'react';
 import { Menu ,Transition } from '@headlessui/react';
-import { ChevronDownIcon } from "@heroicons/react/solid";
-import { useContext } from 'react/cjs/react.development';
-import { userContext } from '../context/UserProvider';
+import {handleSignout} from "../httpResources/signInSignOut";
 
 const UserDropdown = ({children}) => {
 
-    const {user, setUser , auth} = useContext(userContext);
-
-    const handleSignout =async () =>{
-        console.log(user);
-        await auth.signOut();
-        setUser(null);
-        console.log(user);
-        console.log(auth.currentUser);
-    }
-
-    return ( 
+    return (
         <div className="text-right">
             <Menu as="div" className="relative inline-block text-left">
                 {({ open }) => (
@@ -24,10 +12,6 @@ const UserDropdown = ({children}) => {
                     <div>
                     <Menu.Button className="inline-flex text-gray-800 dark:text-white uppercase justify-center w-full px-4 py-2 font-medium rounded-md hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 hover:underline">
                         {children}
-                        {/* <ChevronDownIcon
-                        className="w-5 h-7 ml-2 -mr-1 text-violet-200 hover:text-violet-100"
-                        aria-hidden="true"
-                        /> */}
                     </Menu.Button>
                     </div>
                     <Transition
@@ -42,9 +26,9 @@ const UserDropdown = ({children}) => {
                     >
                     <Menu.Items
                         static
-                        className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                        className="absolute right-4 top-12 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                     >
-                        <div className="px-1 py-1 ">
+                        <div className="px-1 py-1 ">    
                             <Menu.Item>
                                 <button className={"bg-violet-500 text-gray-600 group flex rounded-md items-center w-full px-2 py-2 text-md"}>
                                     Account

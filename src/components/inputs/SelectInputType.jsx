@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react'
-import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { Listbox } from '@headlessui/react'
+import { SelectorIcon } from '@heroicons/react/solid'
 
-const inputType = ["input" , "large input" , "ratings"]
+const inputType = [ "input" , "large input" , "ratings" , "Dropdown"]
 
 
 const SelectInputType = ({formFields , field , setFormFields }) =>{
@@ -43,7 +43,7 @@ const SelectInputType = ({formFields , field , setFormFields }) =>{
                   key={idx}
                   className={({ active }) =>
                     `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'}
-                          cursor-default select-none relative py-2 px-4`
+                          cursor-default select-none relative py-2 px-4 z-50`
                   }
                   value={type}
                 >
